@@ -295,7 +295,7 @@ socket.on('osc_raw', d=>{
 socket.on('exported', d=>{
   let html='';
   if(d.pez){
-    html+=`已导出通用谱包：<a class="dl" href="/download/${d.pez}">${d.pez}</a>`;
+    html+=`已导出通用谱包：<a class="dl" href="/download/${encodeURIComponent(d.pez)}">${d.pez}</a>`;
     html+=`<br><b style="color:var(--amber)">这个 .pez 平台通用：iPad Phira 与 Windows RPE/PhiEdit 都直接导入这一个文件即可（音乐+曲绘+谱面全在里面），无需再传任何单独文件。</b>`;
   } else {
     html+=`导出失败，请重试`;

@@ -42,6 +42,7 @@ import webbrowser
 
 from flask import Flask, request, send_from_directory, jsonify
 from flask_socketio import SocketIO, emit
+from werkzeug.utils import secure_filename
 
 from engine import BeatClock, convert_notes, build_rpe, simulate_session, GestureTracker
 
@@ -719,7 +720,8 @@ def upload():
     f = request.files["file"]
     if not f.filename:
         return jsonify({"ok": False, "msg": "empty filename"}), 400
-    fn = f.filename
+    # 净化文件名，防止路径穿越/特殊字符（服务仅监听 127.0.0.1，加固属于防御性编程）
+    fn = secure_filename(f.filename) or "audio.bin"
     f.save(os.path.join(UPLOAD_DIR, fn))
     return jsonify({"ok": True, "filename": fn})
 
@@ -732,7 +734,7 @@ def upload_cover():
     if not f.filename:
         return jsonify({"ok": False, "msg": "empty filename"}), 400
     data = f.read()
-    ext = os.path.splitext(f.filename)[1].lower()
+    ext = os.path.splitext(secure_filename(f.filename))[1].lower()
     if ext not in COVER_EXT_MAP:
         return jsonify({"ok": False, "msg": "请上传图片文件（png/jpg/gif/webp/bmp）"}), 400
     if len(data) > 10 * 1024 * 1024:

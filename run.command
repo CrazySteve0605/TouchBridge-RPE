@@ -1,7 +1,32 @@
 #!/bin/bash
 # TouchBridge -> RPE 一键启动（macOS）
-# 双击本文件即可：建虚拟环境、装依赖、杀掉旧实例、后台启动服务并在浏览器打开。
-cd "$(dirname "$0")/backend"
+# 双击本文件即可，它会按顺序自动完成：
+#   0) 首次运行：自动编译触控板采集器 TouchBridge（不需要你懂任何编译知识）
+#   1) 创建 Python 虚拟环境并安装依赖（首次稍慢）
+#   2) 清理占用端口的旧实例
+#   3) 后台启动服务，并在浏览器打开制谱网页
+cd "$(dirname "$0")"
+
+# ---- 0) 首次运行：自动编译触控板采集器 ----
+if [ ! -d "TouchBridge/TouchBridge.app" ]; then
+  echo "首次运行：正在编译触控板采集器 TouchBridge …"
+  if ! command -v swiftc >/dev/null 2>&1; then
+    echo "未检测到 Swift 编译器，需要先安装 Xcode 命令行工具（约几分钟）。"
+    osascript -e 'display dialog "首次使用需要安装 Xcode 命令行工具（约几分钟）。\n点「现在安装」后稍等，装好请再双击一次本文件。" buttons {"现在安装"} default button 1' >/dev/null 2>&1 || true
+    xcode-select --install
+    exit 1
+  fi
+  if (cd TouchBridge && bash build.sh); then
+    echo "✔ 采集器编译完成，已为你打开。"
+    osascript -e 'display dialog "触控板采集器已编译完成并为你打开。\n\n以后制谱时：先打开 TouchBridge.app，\n再回到网页点「开始监听 OSC」即可。" buttons {"好"} default button 1' >/dev/null 2>&1 || true
+    open "TouchBridge/TouchBridge.app" || true
+  else
+    osascript -e 'display dialog "触控板采集器编译失败。\n请把终端窗口里的报错截图发到 GitHub Issues。" buttons {"好"} default button 1'
+    exit 1
+  fi
+fi
+
+cd backend
 
 if ! command -v python3 >/dev/null 2>&1; then
   osascript -e 'display dialog "未检测到 python3，请先安装 Python 3.10+" buttons {"好"} default button 1'
