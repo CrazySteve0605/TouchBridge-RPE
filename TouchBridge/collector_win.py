@@ -610,8 +610,12 @@ class RawInputThread(threading.Thread):
                         hid_part = raw.hid
                         n = hid_part.dwSizeHid * hid_part.dwCount
                         if n > 0:
+                            # bRawData 在 RAWINPUT 内的绝对偏移：
+                            #   RAWINPUT.hid(CField).offset=24(x64) + RAWHID.bRawData(CField).offset=8
+                            # （不能写 RAWINPUT.hid.bRawData：对类取嵌套字段得到的是 CField，无该属性）
+                            data_off = RAWINPUT.hid.offset + RAWHID.bRawData.offset
                             report = ctypes.string_at(
-                                ctypes.addressof(buf) + RAWINPUT.hid.bRawData.offset, n)
+                                ctypes.addressof(buf) + data_off, n)
                             if len(self.first_reports) < 3:
                                 self.first_reports.append(report[:32].hex())
                             parser = self._get_parser(raw.header.hDevice)
@@ -619,6 +623,9 @@ class RawInputThread(threading.Thread):
                                 touches = parser.parse(report)
                                 self.hub.ingest(touches)
             except Exception as e:  # 消息泵里绝不能崩
+                if not self.last_error:
+                    import traceback
+                    traceback.print_exc()
                 self.last_error = str(e)
         elif msg == WM_INPUT_DEVICE_CHANGE:
             self.parsers.clear()
