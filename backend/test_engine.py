@@ -2,6 +2,9 @@
 import math
 import sys
 import os
+# Windows GBK 控制台无法编码 "✓" 等字符，替换为 "?" 而不是崩溃
+if hasattr(sys.stdout, "reconfigure"):
+    sys.stdout.reconfigure(errors="replace")
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from engine import (BeatClock, quantize, map_x, convert_notes, build_rpe,
                     simulate_session, GestureTracker, TAP, HOLD, FLICK, DRAG, NOTE_TYPE)

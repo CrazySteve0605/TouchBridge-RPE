@@ -15,6 +15,11 @@ backend/exports/
 .AppleDouble
 .Spotlight-V100
 
+# ---- Windows ----
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
 # ---- TouchBridge 编译产物（用 build.sh 重新生成）----
 TouchBridge/TouchBridge
 TouchBridge/TouchBridge.app/

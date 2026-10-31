@@ -6,6 +6,7 @@
 
 - **后端（`backend/`）**：手势分类、节拍量化、RPE/PEZ 构建、OSC 监听、Web 接口等代码，由 AI 智能体在作者需求描述下生成，并经作者本地运行、调参与修正。
 - **前端（`frontend/`）**：可视化预览页面、录制 / 导出交互等，由 AI 生成。
+- **Windows 采集器（`TouchBridge/collector_win.py`）**：Windows 精确式触控板（PTP）的 Raw Input / HidP 采集与 OSC 发送部分由 AI 智能体生成，其中 `HIDP_VALUE_CAPS` 结构布局（Windows SDK 头文件未直接给出偏移）由 AI 在真实 PTP 设备上通过原始字节反推并经合成报告往返验证；同样由作者确认发布。
 - **文档**：本仓库的 `README.md`、`AI_DISCLOSURE.md`、`.gitignore`、`requirements.txt` 整理、部分工程脚本由 AI 撰写或辅助撰写。
 - **工程化**：仓库结构规划、MIT 许可证选择建议、开源发布流程由 AI 协助。
 
@@ -33,4 +34,4 @@ AI 生成的代码**不保证无 bug、无安全隐患、在所有环境可运�
 
 ---
 
-*最后更新：2026-10-31*
+*最后更新：2026-11-01（新增 Windows 采集器相关声明）*
